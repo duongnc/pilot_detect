@@ -1,0 +1,28 @@
+flowchart TD
+    A[Đầu vào đa phương thức] --> B[Tiền xử lý & Đồng bộ hóa]
+    
+    subgraph B [Tiền xử lý]
+        B1[Face detection<br/>RetinaFace / MTCNN]
+        B2[AU detection<br/>ResNet50]
+        B3[Chuẩn hóa & Căn chỉnh]
+    end
+
+    B --> C1[Luồng 1: Ảnh khuôn mặt<br/>DAN / ViT / ResNet]
+    B --> C2[Luồng 2: Ảnh AU<br/>VGG19 / GCN]
+    B --> C3[Luồng 3: (Tuỳ chọn) Giọng nói / Sinh lý]
+
+    subgraph C [Trích xuất đặc trưng theo phương thức]
+        C1 --> F1[Vector đặc trưng<br/>f_face ∈ R^128]
+        C2 --> F2[Vector đặc trưng<br/>f_au ∈ R^128]
+        C3 --> F3[Vector đặc trưng<br/>f_speech ∈ R^64]
+    end
+
+    F1 & F2 & F3 --> D[Fusion đa phương thức]
+
+    subgraph D [Fusion Module]
+        D1[Fusion tầng đặc trưng<br/>Concatenation / Sum / Attention]
+        D2[Fusion tầng quyết định<br/>Weighted average / Voting]
+    end
+
+    D --> E[Phân loại & Đầu ra]
+    E --> F[6-8 lớp cảm xúc<br/>Angry, Happy, Neutral,...]
